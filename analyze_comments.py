@@ -31,14 +31,12 @@ def anaylze_engagement_rate():
     cbdd = {}
     for comment in comments:
         current_docket_id = comment.get('docketId')
-        if current_docket_id not in cbdd:
-            cbdd[current_docket_id] = []
-        cbdd[current_docket_id].append(comment)
+        cbdd.setdefault(current_docket_id, []).append(comment)
 
     # Document engagement rates keyed by dockeId
     docket_ers = {}
     for docketId, doc_comments in cbdd.iteritems():
-        docket_ers[docketId] = engagement_rate.CalculateEngagementTrent(doc_comments)
+        docket_ers[docketId] = engagement_rate.CalculateEngagementTrend(doc_comments)
         logging.info('Engagement Rate for %s : %d', docketId, docket_ers[docketId])
     lib.mongo.update_dockets('engagementRate', docket_ers)
 

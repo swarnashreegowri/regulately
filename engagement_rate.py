@@ -1,4 +1,5 @@
 import datetime, dateutil.parser
+from collections import defaultdict
 import logging
 
 def GetOrderedCommentsByDate(comments):
@@ -26,7 +27,7 @@ def GetOrderedCommentsByDate(comments):
 def ListAvg(arr):
 	return sum(arr)/len(arr)
 
-def CalculateEngagementTrent(comments):
+def CalculateEngagementTrend(comments):
 	"""Calculates the engagement trend for the dict of comments passed.
 	if n is the number of days ( sorted ) with comments, we compare the
 	moving avg number of comments in the last 3 days (with comments) and
