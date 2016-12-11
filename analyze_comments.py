@@ -1,6 +1,12 @@
 import lib.mongo
 import logging
+import engagement_rate
 import lib.analyze_text
+
+
+def compute_sentiment_score(text):
+    text = text.lower()
+    return text.count('e') - text.count('o')
 
 def compute_rating(positive_count, neutral_count, negative_count):
     total = positive_count + neutral_count + negative_count
@@ -18,6 +24,22 @@ def compute_rating(positive_count, neutral_count, negative_count):
     if neg > 0.7 or (neg > 0.5 and neg >= pos * 2):
         return 'NEGATIVE'
     return 'NEUTRAL'
+
+def anaylze_engagement_rate():
+    comments = lib.mongo.retrieve_comments()
+    # comments keys by DocketId and then further keyed by date.
+    cbdd = {}
+    for comment in comments:
+        current_docket_id = comment.get('docketId')
+        cbdd.setdefault(current_docket_id, []).append(comment)
+
+    # Document engagement rates keyed by dockeId
+    docket_ers = {}
+    for docketId, doc_comments in cbdd.iteritems():
+        docket_ers[docketId] = engagement_rate.CalculateEngagementTrend(doc_comments)
+        logging.info('Engagement Rate for %s : %d', docketId, docket_ers[docketId])
+    lib.mongo.update_dockets('engagementRate', docket_ers)
+
 
 def analyze_comments():
     """Runs sentiment analysis on all comments in the database; updates the
@@ -84,3 +106,4 @@ def analyze_comments():
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
     analyze_comments()
+    anaylze_engagement_rate()
