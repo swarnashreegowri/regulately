@@ -46,3 +46,7 @@ def update_comments(field, value_map):
 
 def retrieve_categories():
     return categories.find()
+
+def rewrite_categories(category_items):
+    categories.delete_many({})
+    categories.insert_many(category_items)

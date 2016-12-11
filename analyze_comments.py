@@ -38,7 +38,7 @@ def analyze_comments():
         logging.info('docket %s, comment %s: sentiment %s' %
                      (docket_id, comment_id, score))
         comment_sentiments[comment_id] = score
-        
+
         # Aggregate the scores for each docket.
         scores.setdefault(docket_id, []).append(score)
         counts = positive_counts if score > 0 else (
