@@ -79,9 +79,10 @@ def retrieveDocket (docketID):
 # insertDockets(newDockets)
 #
 
-def update_dockets(docket_items):
+def update_dockets(field, value_map):
     dockets.bulk_write(
-        [UpdateOne({'_id': item['_id']}, item) for item in docket_items])
+        [UpdateOne({'docketId': docket_id}, {'$set': {field: value}})
+         for docket_id, value in value_map.items()])
 
 def retrieve_comments():
     return comments.find()
@@ -89,6 +90,7 @@ def retrieve_comments():
 def retrieve_comments_by_docket_id(docket_id):
     return comments.find({'docketId': docket_id})
 
-def update_comments(comment_items):
+def update_comments(field, value_map):
     comments.bulk_write(
-        [UpdateOne({'_id': item['_id']}, item) for item in comment_items])
+        [UpdateOne({'documentId': comment_id}, {'$set': {field: value}})
+         for comment_id, value in value_map.items()])
