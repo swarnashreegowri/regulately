@@ -23,8 +23,7 @@ def retrieveDockets (categories = ""):
     return retrievedDockets
 
 def retrieveDocket(docketID):
-    docket = dockets.find_one({'id': docketID})
-    return docket
+    return dockets.find_one({'docketId': docketID})
 
 def update_dockets(field, value_map):
     dockets.bulk_write(
