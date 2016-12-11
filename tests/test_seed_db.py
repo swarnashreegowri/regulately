@@ -50,6 +50,7 @@ class TestDatabase(unittest.TestCase):
     #     t.join()
     #     self.assertEqual(self.mongo['test'].find()[0], {"_id": 'test'})  # inserted the record
 
+
 class TestDocketAPI(unittest.TestCase):
     """"Test the regulations.gov documents API queries"""
 
@@ -68,19 +69,31 @@ class TestDocketAPI(unittest.TestCase):
 
         fetched_json_obj = seed_db.get_category_documents(category, document_type, 10)
         self.assertTrue('docketId' in fetched_json_obj['documents'][0])
-        self.assertTrue('category' in fetched_json_obj['documents'][0])
-        self.assertEqual(fetched_json_obj['documents'][0]['category'], REGULATION_CATEGORIES[category])
 
     def test_get_docket(self):
         """Valid docket id should return JSON record with docket-specific fields"""
         query_id = 'EPA-HQ-OAR-2014-0198'
-        fetched_json_obj = seed_db.get_docket(query_id)
+        category = 'PRE'
+        fetched_json_obj = seed_db.get_docket(query_id, category)
         self.assertTrue('docketAbstract' in fetched_json_obj)
         self.assertEqual(fetched_json_obj['docketId'], query_id)
+        self.assertEqual(fetched_json_obj['category'], REGULATION_CATEGORIES[category])
 
-    def test_fetch_invalid_docket(self):
+    def test_get_invalid_docket(self):
         """Invalid docket id should return JSON record with 404 Error"""
         query_id = 'NOT-VALID-ID-STRING'
-        fetched_json_obj = seed_db.get_docket(query_id)
+        category = 'PRE'
+        fetched_json_obj = seed_db.get_docket(query_id, category)
         self.assertTrue('code' in fetched_json_obj)
         self.assertEqual(fetched_json_obj['code'], 404)
+
+    def test_get_docket_comments(self):
+        """Valid category should provide list of documents and category should be added to JSON"""
+        query_id = 'EPA-HQ-OAR-2014-0198'
+        fetched_json_obj = seed_db.get_docket_comments(query_id)
+        self.assertTrue('docketId' in fetched_json_obj[0])
+        self.assertEqual(fetched_json_obj[0]['documentType'], 'Public Submission')
+
+        query_id = 'EPA-HQ-OPP-2015-0560'  # had no comments as of Dec 12, 2016
+        fetched_json_obj = seed_db.get_docket_comments(query_id)
+        self.assertFalse(fetched_json_obj)

@@ -1,6 +1,7 @@
 """The main Flask application.  To run the app: ./serve"""
 
 from flask import Flask, Response, request, send_from_directory
+import lib.mongo
 import json
 
 app = Flask('regulately')
@@ -16,31 +17,18 @@ def main_page():
 Welcome to Regulately!
 '''
 
-@app.route('/dockets/<id>')
-def get_docket(id):
-    return Response(json.dumps({
-        'title': 'Docket %s' % id,
-        'num_comments': 0,
-        'abstract': 'A thing.',
-        'sentiment': {
-            'positive': 0,
-            'negative': 0,
-            'neutral': 0,
-            'rating': 0
-        },
-        'comment_start_date': '2016-01-01',
-        'comment_end_date': '2016-12-01',
-        'is_open': True,
-        'topic': [],
-        'agency': 'EELS',
-        'comment_summary': {
-            'word_cloud': {},
-        },
-        'comments': [
-            {
-                'text': 'A comment.',
-                'sentiment': 0,
-                'length': 123,
-            }
-        ]
-    }), mimetype='application/json')
+class Encoder(json.JSONEncoder):
+    def default(self, obj):
+        return str(obj)
+
+@app.route('/dockets/<docket_id>')
+def get_docket(docket_id):
+    docket = lib.mongo.retrieveDocket(docket_id)
+    return Response(json.dumps(docket, cls=Encoder),
+                    mimetype='application/json')
+
+@app.route('/dockets/<docket_id>/comments')
+def get_comments(docket_id):
+    comments = lib.mongo.retrieve_comments_by_docket_id(docket_id)
+    return Response(json.dumps(list(comments), cls=Encoder),
+                    mimetype='application/json')
