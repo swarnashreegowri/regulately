@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 import json
-import requests
-from external_services import IBMWatson
-from textstat.textstat import textstat
 
+from textstat.textstat import textstat
 from watson_developer_cloud import AlchemyLanguageV1
+
+from lib.external_services import IBMWatson
 
 API_KEY = IBMWatson
 
