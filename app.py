@@ -16,6 +16,11 @@ def static_file(path):
 def main_page():
     return send_file(os.path.join(root, 'index.html'))
 
+@app.route('/categories')
+def get_categories():
+    categories = lib.mongo.retrieve_categories()
+    return make_json_response(categories)
+
 @app.route('/dockets')
 def get_dockets():
     count = min(int(request.args.get('count', '10')), 100)
