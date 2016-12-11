@@ -102,4 +102,6 @@ apikeys.py
 .#*
 *.swp
 *.un~
->>>>>>> 68b44835f5bbd1270c0e451b6098fc48ff8d5bca
+
+# Credentials that we don't want to check in
+external_services.py

@@ -13,8 +13,8 @@ import requests
 from threading import Thread
 from queue import Queue
 
-from Lib.Mongo import database
-from ExternalServices import REG_API_KEY
+from lib.mongo import database
+from external_services import REG_API_KEY
 from constants import REGULATION_CATEGORIES
 
 q = Queue()
@@ -42,7 +42,7 @@ def get_category_documents(category, document_type, rules_per_page):
         - cp: comment period. Set to O (Open).
         - cs: comment period closing soon. Set to 90 (days until closing).
 
-    :param category: Category of docket.
+    :param category: Category of docket. One of the keys to REGULATION_CATEGORIES stored in constants.py
     :param document_type: One of N: Notice, PR: Proposed Rule, FR: Rule, O: Other, SR: Supporting & Related Material,
         PS: Public Submission
     :param rules_per_page: Number of records to return.
@@ -50,7 +50,13 @@ def get_category_documents(category, document_type, rules_per_page):
     """
     search_parameters = {'api_key': REG_API_KEY, 'cat': category, 'dct': document_type, 'rpp': rules_per_page}
     fetched_docket = requests.get('https://api.data.gov/regulations/v3/documents', params=search_parameters)
-    return fetched_docket.json()
+
+    # Add category to each JSON
+    json_obj = fetched_docket.json()
+    for document in json_obj['documents']:
+        document['category'] = REGULATION_CATEGORIES[category]
+
+    return json_obj
 
 
 def get_docket(docket_id):
@@ -75,8 +81,8 @@ def get_docket_comments(docket_id):
     :return:
     """
     search_parameters = {'api_key': REG_API_KEY, 'dktid': docket_id, 'dct': 'PS', 'rpp': 1000}
-    fetched_docket = requests.get('https://api.data.gov/regulations/v3/documents', params=search_parameters)
-    return fetched_docket.json()
+    fetched_comments = requests.get('https://api.data.gov/regulations/v3/documents', params=search_parameters)
+    return fetched_comments.json()
 
 
 def worker():
