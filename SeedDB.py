@@ -11,7 +11,7 @@ import os
 import requests
 
 from threading import Thread
-from Queue import Queue
+from queue import Queue
 
 from Lib.Mongo import database
 from ExternalServices import REG_API_KEY
@@ -36,6 +36,7 @@ def insert(json_doc, collection):
 
 def get_category_documents(category, document_type, rules_per_page):
     """
+    Get all
 
     :param category: Category of docket.
     :param document_type: One of N: Notice, PR: Proposed Rule, FR: Rule, O: Other, SR: Supporting & Related Material,
