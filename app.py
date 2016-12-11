@@ -19,7 +19,7 @@ def main_page():
 @app.route('/categories', methods=['GET', 'OPTIONS'])
 def get_categories():
     categories = lib.mongo.retrieve_categories()
-    return make_json_response(categories)
+    return make_json_response(list(categories))
 
 @app.route('/dockets', methods=['GET', 'OPTIONS'])
 def get_dockets():
