@@ -17,7 +17,7 @@ echo
 echo 'Building the front end.'
 cd "$root"
 cd regulately-front-end
-if [ -e client/dist/bundle*.js ]; then
+if [ -f client/dist/bundle*.js ]; then
     echo -n 'Okay to delete existing bundle.js? '
     read answer
     if [ "$answer" = y ]; then
@@ -26,6 +26,8 @@ if [ -e client/dist/bundle*.js ]; then
     else
         echo 'Reusing existing bundle.js.'
     fi
+else
+    npm run dist
 fi
 
 echo
