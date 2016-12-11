@@ -1,25 +1,20 @@
 """
-Script to get all of the JSON files into the Mongo Database
+Script to get 10 Final Rules and Pending Rules for a particular category on regulations.gov and upload the rules and
+associated comments to MongoDB.
 
-Largely derived from work by Zachary Jacobi (https://github.com/zejacobi) in the DeltaGreen project
+MongoDB communication derived from work by Zachary Jacobi (https://github.com/zejacobi) in the DeltaGreen project
 (https://github.com/zejacobi/DeltaGreen)
 """
 
-import json
-import sys
-import os
 import requests
-
-from threading import Thread
-from queue import Queue
+import logging
 
 from lib.mongo import database
 from external_services import REG_API_KEY
 from constants import REGULATION_CATEGORIES
 
-q = Queue()
-num_threads = 2
-threads = []
+regulation_category = 'PRE'  # enter regulation category of interest here
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
 def insert(json_doc, collection):
@@ -60,14 +55,18 @@ def get_docket(docket_id, category):
 
     :param str docket_id: A valid ID of a docket in regulations.gov, e.g. 'EPA-HQ-OAR-2014-0198'
     :param str category: Category of docket. One of the keys to REGULATION_CATEGORIES stored in constants.py
-    :return: A string containing the JSON returned by the regulations.gov API.
+    :return: A string containing the JSON returned by the regulations.gov API. None if received a 'status' field (which
+        indicates some kind of error)
     """
     search_parameters = {'api_key': REG_API_KEY, 'docketId': docket_id}
     fetched_docket = requests.get('https://api.data.gov/regulations/v3/docket', params=search_parameters)
 
+    if fetched_docket.status_code != 200:
+        return None;
+
     docket_obj = fetched_docket.json()
     docket_obj['category'] = REGULATION_CATEGORIES[category]
-    return docket_obj
+    return docket_obj if 'status' not in docket_obj else None
 
 
 def get_docket_comments(docket_id):
@@ -83,45 +82,31 @@ def get_docket_comments(docket_id):
     """
     search_parameters = {'api_key': REG_API_KEY, 'dktid': docket_id, 'dct': 'PS', 'rpp': 1000}
     fetched_comments = requests.get('https://api.data.gov/regulations/v3/documents', params=search_parameters)
+
+    if fetched_comments.status_code != 200:
+        return None;
+
     comments_obj = fetched_comments.json()
-    return comments_obj['documents'] if 'documents' in comments_obj else []
+    return comments_obj['documents'] if 'documents' in comments_obj else None
 
-def worker():
-    """
-    Worker thread
-    """
-    while True:
-        json_obj = q.get()
-        if not json_obj:
-            break
-
-        collection = 'dockets' if 'numberOfComments' in json_obj else 'comments'
-        insert(json_obj, collection)
-        q.task_done()
 
 if __name__ == '__main__':
-    regulation_category = 'HCFP'
-    documents = get_category_documents(regulation_category, 'PR', 10)['documents']
-
-    for i in range(num_threads):
-        t = Thread(target=worker, daemon=True)
-        t.start()
-        threads.append(t)
+    documents = get_category_documents(regulation_category, 'PR', 20)['documents']
+    documents.append(get_category_documents(regulation_category, 'FR', 20)['documents'])
 
     for document in documents:
-        docket_id = document['docketId']
-        docket = get_docket(docket_id, regulation_category)
-        comments = get_docket_comments(docket_id)
+        if 'docketId' in document:
+            docket_id = document['docketId']
 
-        # Add docket to queue
-        q.put(docket)
+            # Fetch from API- will be None if there was an error
+            docket = get_docket(docket_id, regulation_category)
+            comments = get_docket_comments(docket_id)
 
-        # Add comments to queue
-        q.put(comments)
+            # Insert into database
+            if docket:
+                insert(docket, 'dockets')
 
-    q.join()
+            if comments:
+                insert(comments, 'comments')
 
-    for i in range(num_threads):
-        q.put(None)
-    for t in threads:
-        t.join()
+            logging.info('Completed docket upload for id: {}'.format(docket_id))
