@@ -9,23 +9,22 @@ dockets = database['dockets']
 comments = database['comments']
 
 # def insertDockets (newDockets) :
-# 	dockets.insert(newDockets)
+#     dockets.insert(newDockets)
 
 def retrieveDockets (categories = ""):
-	# takes an array of categories ex: ["nature"]
-	retrievedDockets = []
-	if categories :
-		for retrievedDocket in dockets.find({'topic': {'$in' : categories}}):
-			retrievedDockets.append(retrievedDocket)
-	else :
-		for retrievedDocket in dockets.find():
-			retrievedDockets.append(retrievedDocket)
-			
-	return retrievedDockets
+    # takes an array of categories ex: ["nature"]
+    retrievedDockets = []
+    if categories :
+        for retrievedDocket in dockets.find({'topic': {'$in' : categories}}):
+            retrievedDockets.append(retrievedDocket)
+    else :
+        for retrievedDocket in dockets.find():
+            retrievedDockets.append(retrievedDocket)
+    return retrievedDockets
 
-def retrieveDocket (docketID):
-	docket = dockets.find_one({'id': docketID})
-	return Docket
+def retrieveDocket(docketID):
+    docket = dockets.find_one({'id': docketID})
+    return docket
 
 def update_dockets(field, value_map):
     dockets.bulk_write(
