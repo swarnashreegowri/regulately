@@ -90,9 +90,6 @@ ENV/
 # Rope project settings
 .ropeproject
 
-
-apikeys.py
-
 # MacOS junk
 .DS_Store
 
