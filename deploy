@@ -9,6 +9,7 @@ else
     exit 1
 fi
 
+<<<<<<< HEAD
 if [ -e regulately ]; then
     echo -n 'Okay to delete existing "regulately" directory? '
     read answer
@@ -21,6 +22,11 @@ fi
 
 root=$(pwd)
 out=$(pwd)/regulately
+=======
+root=$(pwd)
+out=/tmp/regulately
+rm -rf "$out"
+>>>>>>> 8fccadc06add583e1f3fef79a5be147413cbd239
 
 echo
 echo 'Building the front end.'
@@ -39,7 +45,11 @@ fi
 
 echo
 echo 'Building the back end.'
+<<<<<<< HEAD
 mkdir "$out"
+=======
+mkdir -p "$out"
+>>>>>>> 8fccadc06add583e1f3fef79a5be147413cbd239
 cd "$root"
 cd regulately-back-end
 cp -pr *.html "$out"
@@ -57,9 +67,28 @@ echo
 echo 'Making an archive.'
 cd "$root"
 name=regulately-$(date -u +'%Y-%m-%d-%H-%M-%S').zip
+<<<<<<< HEAD
 zip -r $name regulately
 
 echo
 echo 'Done!'
 echo 'To run locally: regulately/serve'
 echo "To deploy, upload: $name"
+=======
+cd "$out"
+cd ..
+zip -r "$name" regulately
+cp "$name" "$root"
+cd "$root"
+
+echo
+echo 'Uploading to server.'
+scp "$name" regulately:
+
+echo
+echo 'Restarting server.'
+ssh regulately 'bash -c '\''rm -rf regulately; unzip "'$name'"; sudo systemctl restart regulately'\'
+
+echo
+echo 'Done!'
+>>>>>>> 8fccadc06add583e1f3fef79a5be147413cbd239

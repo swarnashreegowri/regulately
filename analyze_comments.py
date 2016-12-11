@@ -3,6 +3,7 @@ import logging
 import engagement_rate
 import lib.analyze_text
 
+
 def compute_sentiment_score(text):
     text = text.lower()
     return text.count('e') - text.count('o')
