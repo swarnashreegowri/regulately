@@ -10,7 +10,7 @@ import requests
 import logging
 
 from lib.mongo import database
-from external_services import REG_API_KEY
+from lib.external_services import REG_API_KEY
 from constants import REGULATION_CATEGORIES
 
 regulation_category = 'PRE'  # enter regulation category of interest here
