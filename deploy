@@ -44,6 +44,7 @@ cd "$root"
 cd regulately-back-end
 cp -pr *.html "$out"
 cp -pr *.py "$out"
+cp -pr *.txt "$out"
 cp -pr Procfile "$out"
 cp -pr lib "$out"
 cp -pr serve "$out"
