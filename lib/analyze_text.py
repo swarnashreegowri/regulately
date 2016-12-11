@@ -10,7 +10,7 @@ API_KEY = IBMWatson
 
 alchemy_language = AlchemyLanguageV1(api_key=API_KEY)
 
-def getSentiment (text):
+def getSentiment(text):
     if not text.strip():
         return 0
     try: 
@@ -66,4 +66,10 @@ def get_complexity(text):
     30-49 : Difficult
     0-29 : Very Confusing
     """
-    return textstat.flesch_reading_ease(text)
+    if not text.strip():
+        return 0
+    try:
+        commentComplexity = textstat.flesch_reading_ease(text)
+        return commentComplexity
+    except:
+        return 0

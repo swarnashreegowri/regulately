@@ -33,8 +33,8 @@ def update_dockets(field, value_map):
         [UpdateOne({'docketId': docket_id}, {'$set': {field: value}})
          for docket_id, value in value_map.items()])
 
-def retrieve_comments():
-    return comments.find().sort("postedDate", -1)
+def retrieve_comments(count=1000):
+    return comments.find().sort("postedDate", -1).limit(count)
 
 def retrieve_comments_by_docket_id(docket_id, count):
     return comments.find({'docketId': docket_id}).sort("postedDate", -1).limit(count)
