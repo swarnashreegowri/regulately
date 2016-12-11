@@ -15,7 +15,7 @@ def retrieveDockets (count, categories = ""):
     # takes an array of categories ex: ["nature"]
     retrievedDockets = []
     if categories :
-        for retrievedDocket in dockets.find({'topic': {'$in' : categories}}).limit(count):
+        for retrievedDocket in dockets.find({'category': {'$in' : categories}}).limit(count):
 	        # .sort("date", -1)
             retrievedDockets.append(retrievedDocket)
     else :
