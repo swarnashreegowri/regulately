@@ -1,4 +1,5 @@
 from pymongo import MongoClient
+from pymongo.operations import UpdateOne
 from external_services import DATABASE, MONGO_STRING
 
 client = MongoClient(MONGO_STRING + DATABASE)
@@ -63,6 +64,7 @@ SEED_DATA = [
 ]
 
 dockets = database['dockets']
+comments = database['comments']
 
 def insertDockets (newDockets) :
     dockets.insert(newDockets)
@@ -71,7 +73,22 @@ def insertDockets (newDockets) :
 #     print (retrieveDockets)
 
 def retrieveDocket (docketID):
-    docket = dockets.find_one({'id': docketID})
+    docket = dockets.find_one({'docketId': docketID})
     return docket
 
 # insertDockets(newDockets)
+#
+
+def update_dockets(docket_items):
+    dockets.bulk_write(
+        [UpdateOne({'_id': item['_id']}, item) for item in docket_items])
+
+def retrieve_comments():
+    return comments.find()
+
+def retrieve_comments_by_docket_id(docket_id):
+    return comments.find({'docketId': docket_id})
+
+def update_comments(comment_items):
+    comments.bulk_write(
+        [UpdateOne({'_id': item['_id']}, item) for item in comment_items])

@@ -21,7 +21,14 @@ class Encoder(json.JSONEncoder):
     def default(self, obj):
         return str(obj)
 
-@app.route('/dockets/<id>')
-def get_docket(id):
-    return Response(json.dumps(lib.mongo.retrieveDocket(id), cls=Encoder),
+@app.route('/dockets/<docket_id>')
+def get_docket(docket_id):
+    docket = lib.mongo.retrieveDocket(docket_id)
+    return Response(json.dumps(docket, cls=Encoder),
+                    mimetype='application/json')
+
+@app.route('/dockets/<docket_id>/comments')
+def get_comments(docket_id):
+    comments = lib.mongo.retrieve_comments_by_docket_id(docket_id)
+    return Response(json.dumps(list(comments), cls=Encoder),
                     mimetype='application/json')
