@@ -62,7 +62,7 @@ def get_docket(docket_id, category):
     fetched_docket = requests.get('https://api.data.gov/regulations/v3/docket', params=search_parameters)
 
     if fetched_docket.status_code != 200:
-        return None;
+        return None
 
     docket_obj = fetched_docket.json()
     docket_obj['category'] = REGULATION_CATEGORIES[category]

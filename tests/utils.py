@@ -16,4 +16,5 @@ class Client:
 
     def get_json(self, _path, _expected_status=200, _headers={}, **kwargs):
         result = self.get(_path, _expected_status, _headers, **kwargs)
+        assert result.headers['Access-Control-Allow-Origin'] == '*'
         return json.loads(result.data.decode('utf-8'))
