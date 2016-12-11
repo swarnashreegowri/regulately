@@ -69,16 +69,15 @@ class TestDocketAPI(unittest.TestCase):
         self.assertEqual(fetched_json_obj['category'], REGULATION_CATEGORIES[category])
 
     def test_get_invalid_docket(self):
-        """Invalid docket id should return JSON record with 404 Error"""
+        """Invalid docket id should return None"""
         query_id = 'NOT-VALID-ID-STRING'
         category = 'PRE'
         fetched_json_obj = seed_db.get_docket(query_id, category)
-        self.assertTrue('code' in fetched_json_obj)
-        self.assertEqual(fetched_json_obj['code'], 404)
+        self.assertIsNone(fetched_json_obj)
 
     def test_get_docket_comments(self):
         """Valid category should provide list of documents and category should be added to JSON"""
-        query_id = 'EPA-HQ-OAR-2014-0198'
+        query_id = 'USCG-2000-7080'
         fetched_json_obj = seed_db.get_docket_comments(query_id)
         self.assertTrue('docketId' in fetched_json_obj[0])
         self.assertEqual(fetched_json_obj[0]['documentType'], 'Public Submission')
