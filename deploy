@@ -57,9 +57,15 @@ echo
 echo 'Making an archive.'
 cd "$root"
 name=regulately-$(date -u +'%Y-%m-%d-%H-%M-%S').zip
-zip -r $name regulately
+zip -r "$name" regulately
+
+echo
+echo 'Uploading to server.'
+scp "$name" regulately@23.99.1.48:
+
+echo
+echo 'Restarting server.'
+ssh regulately@23.99.1.48 bash -c 'sudo systemctl stop regulately; rm -rf regulately; unzip "'$name'"; sudo systemctl restart regulately'
 
 echo
 echo 'Done!'
-echo 'To run locally: regulately/serve'
-echo "To deploy, upload: $name"
