@@ -6,7 +6,7 @@ database = client[DATABASE]
 
 SEED_DATA = [
     {
-    	'id': '1',
+        'id': '1',
         'title': 'Fake Docket',
         'num_comments': 1,
         'abstract': 'A thing.',
@@ -16,7 +16,7 @@ SEED_DATA = [
             'neutral': 0,
             'rating': 0
         },
-        'category': ["environment", "politics"]
+        'category': ["environment", "politics"],
         'comment_start_date': '2016-01-01',
         'comment_end_date': '2016-12-01',
         'is_open': True,
@@ -34,7 +34,7 @@ SEED_DATA = [
         ]
     },
     {
-    	'id': '2',
+        'id': '2',
         'title': 'Fake Docket 2',
         'num_comments': 1,
         'abstract': 'Mor good info.',
@@ -65,13 +65,13 @@ SEED_DATA = [
 dockets = database['dockets']
 
 def insertDockets (newDockets) :
-	dockets.insert(newDockets)
+    dockets.insert(newDockets)
 
-# def retreiveDockets ():
-# 	print (retreiveDockets)
+# def retrieveDockets ():
+#     print (retrieveDockets)
 
-def retreiveDocket (docketID):
-	docket = dockets.find_one({'id': docketID})
-	return Docket
-	
+def retrieveDocket (docketID):
+    docket = dockets.find_one({'id': docketID})
+    return docket
+
 # insertDockets(newDockets)
