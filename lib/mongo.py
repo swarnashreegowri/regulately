@@ -11,19 +11,19 @@ comments = database['comments']
 # def insertDockets (newDockets) :
 # 	dockets.insert(newDockets)
 
-def retreiveDockets (categories = ""):
+def retrieveDockets (categories = ""):
 	# takes an array of categories ex: ["nature"]
 	retrievedDockets = []
 	if categories :
-		for retreivedDocket in dockets.find({'topic': {'$in' : categories}}):
-			retrievedDockets.append(retreivedDocket)
+		for retrievedDocket in dockets.find({'topic': {'$in' : categories}}):
+			retrievedDockets.append(retrievedDocket)
 	else :
-		for retreivedDocket in dockets.find():
-			retrievedDockets.append(retreivedDocket)
+		for retrievedDocket in dockets.find():
+			retrievedDockets.append(retrievedDocket)
 			
 	return retrievedDockets
 
-def retreiveDocket (docketID):
+def retrieveDocket (docketID):
 	docket = dockets.find_one({'id': docketID})
 	return Docket
 
