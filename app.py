@@ -26,7 +26,8 @@ def get_dockets():
     count = min(int(request.args.get('count', '10')), 100)
     category = request.args.get('category', '')
     categories = category.split(',') if category else []
-    dockets = lib.mongo.retrieveDockets(count=count, categories=categories)
+    openForComment = request.args.get('isOpen', False)
+    dockets = lib.mongo.retrieveDockets(count=count, categories=categories, openForComment=openForComment)
     return make_json_response(dockets)
 
 @app.route('/dockets/<docket_id>')
@@ -36,7 +37,8 @@ def get_docket(docket_id):
 
 @app.route('/dockets/<docket_id>/comments')
 def get_comments(docket_id):
-    comments = lib.mongo.retrieve_comments_by_docket_id(docket_id)
+    count = min(int(request.args.get('count', '10')), 100)
+    comments = lib.mongo.retrieve_comments_by_docket_id(docket_id, count)
     return make_json_response(list(comments))
 
 def make_json_response(data):
