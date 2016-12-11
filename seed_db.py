@@ -13,14 +13,11 @@ import re
 from dateutil.parser import parse
 
 from lib.mongo import database
-from external_services import REG_API_KEY
-from constants import REGULATION_CATEGORIES
+from lib.external_services import REG_API_KEY
+
+import constants
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-
-# Parameters for database seeding
-regulation_category = 'ITT'  # enter regulation category of interest here
-results_per_category = 10  # will fetch this #/2 'PR' and 'FR' records from the regulation category above
 
 
 def insert(json_doc, collection):
@@ -35,7 +32,7 @@ def insert(json_doc, collection):
     return database[collection].insert(json_doc)
 
 
-def get_category_documents(category, document_type, results_per_page):
+def get_category_documents(category, document_type, results_per_page, comments_open):
     """
     Get a list of documents in a particular category
 
@@ -78,10 +75,11 @@ def get_docket(document, category,):
     if fetched_docket.status_code != 200:
         return None
 
-    # Add category field, comment due date, and queryable date information
+    # Add category field and whether open for comment
     docket_obj = fetched_docket.json()
     docket_obj['categoryId'] = category
-    docket_obj['category'] = REGULATION_CATEGORIES[category]
+    docket_obj['category'] = constants.REGULATION_CATEGORIES[category]
+    docket_obj['openForComment'] = document.get('openForComment')
 
     # Define date information for sorting
     docket_obj = add_sort_date(docket_obj, document.get('commentDueDate'))
@@ -128,6 +126,7 @@ def add_sort_date(docket_obj, comment_due_date):
 
     return docket_obj
 
+
 def add_timeline_events(docket_obj):
     """
     Add two fields, 'latestTimelineEvent' and 'firstTimelineEvent', to the docket. Dockets have a large number of
@@ -163,17 +162,23 @@ def parse_api_date(date_string):
 
 
 if __name__ == '__main__':
-    documents = get_category_documents(regulation_category, 'PR', results_per_category//2)['documents']
-    documents.append(get_category_documents(regulation_category, 'FR', results_per_category//2)['documents'])
+    documents = []
+    for document_type in 'PR', 'FR':
+        documents.extend(get_category_documents(category=constants.QUERY_CATEGORY,
+                                                document_type=document_type,
+                                                results_per_page=constants.RESULTS_PER_QUERY//2,
+                                                comments_open=constants.QUERY_IS_OPEN)['documents'])
 
     for document in documents:
         # Fetch from API- will be None if there was an error
-        docket = get_docket(document, regulation_category)
-        comments = get_docket_comments(docket['docketId'])
+        docket = get_docket(document, constants.QUERY_CATEGORY)
 
-        # Insert into database
-        if docket:
-            insert(docket, 'dockets-dated')
+        if not docket:
+            continue
+
+        # Insert docket and comments into database
+        insert(docket, 'dockets-dated')
+        comments = get_docket_comments(docket['docketId'])
 
         if comments:
             insert(comments, 'comments-dated')

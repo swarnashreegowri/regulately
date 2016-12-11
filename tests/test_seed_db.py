@@ -8,9 +8,9 @@ import mongomock
 import json
 
 from dateutil.parser import parse
-from constants import REGULATION_CATEGORIES
 
 import seed_db as seed_db
+import constants as constants
 
 test_data_path = os.path.join('.', 'tests', 'test_data')
 test_docket = os.path.join(test_data_path, 'sample_docket.json')
@@ -43,7 +43,7 @@ class TestDocketAPI(unittest.TestCase):
         category = 'EELS'
         document_type = 'PR'
 
-        fetched_json_obj = seed_db.get_category_documents(category, document_type, 10)
+        fetched_json_obj = seed_db.get_category_documents(category, document_type, 10, True)
         self.assertTrue('docketId' in fetched_json_obj['documents'][0])
 
     def test_get_docket(self):
@@ -54,7 +54,8 @@ class TestDocketAPI(unittest.TestCase):
         fetched_json_obj = seed_db.get_docket(document, category)
         self.assertTrue('docketAbstract' in fetched_json_obj)
         self.assertEqual(fetched_json_obj['docketId'], query_id)
-        self.assertEqual(fetched_json_obj['category'], REGULATION_CATEGORIES[category])
+        self.assertEqual(fetched_json_obj['category'], constants.REGULATION_CATEGORIES[category])
+        self.assertEqual(fetched_json_obj['openForComment'], None)
 
     def test_get_invalid_docket(self):
         """Invalid docket id should return None"""
