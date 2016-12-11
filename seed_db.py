@@ -14,7 +14,6 @@ from dateutil.parser import parse
 
 from lib.mongo import database
 from lib.external_services import REG_API_KEY
-
 import constants
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')

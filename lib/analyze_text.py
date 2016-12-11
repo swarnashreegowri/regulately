@@ -27,19 +27,37 @@ def getConcepts (text):
         concepts.append(concept)
     return concepts
 
+<<<<<<< Updated upstream
 def getKeywords (text):
     keywords = []
     keywordsJson = json.loads(json.dumps(alchemy_language.keywords(text=text),indent=2))["keywords"]
+=======
+
+def getKeywords(text):
+    keywords = []
+    keywordsJson = json.loads(json.dumps(alchemy_language.keywords(text=text), indent=2))["keywords"]
+>>>>>>> Stashed changes
     for newKeyword in keywordsJson:
         keyword = {"relevance": newKeyword["relevance"], "text": newKeyword["text"]}
         keywords.append(keyword)
     return keywords
 
+<<<<<<< Updated upstream
 def getEmotions (text):
     return json.loads(json.dumps(alchemy_language.emotion(text=text),indent=2))["docEmotions"]
 
 def extractEntities (text):
     return json.loads(json.dumps(alchemy_language.entities(text = text),indent=2))["entities"]
+=======
+
+def getEmotions(text):
+    return json.loads(json.dumps(alchemy_language.emotion(text=text), indent=2))["docEmotions"]
+
+
+def extractEntities(text):
+    return json.loads(json.dumps(alchemy_language.entities(text=text), indent=2))["entities"]
+
+>>>>>>> Stashed changes
 
 # def getSimilarity (textOne, textTwo):
 #     payload = {
@@ -55,6 +73,7 @@ def extractEntities (text):
 #     status = requests.post('http://dev.neuronme.com/api/semanticrelatedness/', data=json.dumps(payload), headers=headers)
 #     return status.json()["Score"]
 
+<<<<<<< Updated upstream
 def getComplexity (text):
     '''
     90-100 : Very Easy 
@@ -65,4 +84,19 @@ def getComplexity (text):
     30-49 : Difficult 
     0-29 : Very Confusing
     '''
+=======
+
+def get_complexity(text):
+    """
+    0-100 : Very Easy
+    80-89 : Easy
+    0-79 : Fairly Easy
+    60-69 : Standard
+    50-59 : Fairly Difficult
+    30-49 : Difficult
+    0-29 : Very Confusing
+    :param text:
+    :return:
+    """
+>>>>>>> Stashed changes
     return textstat.flesch_reading_ease(text)
