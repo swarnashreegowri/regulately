@@ -17,6 +17,7 @@ test_docket = os.path.join(test_data_path, 'sample_docket.json')
 test_comment = os.path.join(test_data_path, 'sample_comment.json')
 json_obj = {"_id": "test"}
 
+
 class TestDatabase(unittest.TestCase):
 
     def setUp(self):
@@ -87,5 +88,11 @@ class TestAddDateInformation(unittest.TestCase):
         """Should add latestTimelineEvent and firstTimelineEvent fields that match sample_docket.json"""
         docket = seed_db.add_timeline_events(self.docket)
 
-        self.assertEqual(docket['firstTimelineEvent'], parse('12/01/2000'))
-        self.assertEqual(docket['latestTimelineEvent'], parse('08/29/2016'))
+        self.assertEqual(docket['firstTimelineEvent'], parse('12/01/2000', dayfirst=False))
+        self.assertEqual(docket['latestTimelineEvent'], parse('08/29/2016', dayfirst=False))
+
+    def test_parse_dates(self):
+        date_strings = ["06/08/2016", "08/29/2006", "01/00/2017", "03/01/2001"]
+        expected_dates = [parse(d, dayfirst=False) for d in ["06/08/2016", "08/29/2006", "01/01/2017", "03/01/2001"]]
+
+        self.assertSequenceEqual(seed_db.parse_dates(date_strings), expected_dates)

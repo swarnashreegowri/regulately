@@ -8,14 +8,19 @@ MongoDB communication derived from work by Zachary Jacobi (https://github.com/ze
 
 import requests
 import logging
+import re
+
+from dateutil.parser import parse
 
 from lib.mongo import database
 from external_services import REG_API_KEY
 from constants import REGULATION_CATEGORIES
-from dateutil.parser import parse
 
-regulation_category = 'ITT'  # enter regulation category of interest here
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+
+# Parameters for database seeding
+regulation_category = 'ITT'  # enter regulation category of interest here
+results_per_category = 10  # will fetch this #/2 'PR' and 'FR' records from the regulation category above
 
 
 def insert(json_doc, collection):
@@ -73,6 +78,7 @@ def get_docket(docket_id, category, comment_due_date):
 
     # Add category field, comment due date, and queryable date information
     docket_obj = fetched_docket.json()
+    docket_obj['categoryId'] = category
     docket_obj['category'] = REGULATION_CATEGORIES[category]
     docket_obj['commentDueDate'] = parse(comment_due_date) if comment_due_date is not None else None
     docket_obj = add_timeline_events(docket_obj)
@@ -114,7 +120,9 @@ def add_timeline_events(docket_obj):
     if 'timeTables' not in docket_obj:
         return docket_obj
 
-    dates = [parse(d.get('date')) for d in docket_obj['timeTables'] if d.get('date')]
+    # Get all timeline dates
+    date_strings = [d.get('date') for d in docket_obj['timeTables'] if d.get('date')]
+    dates = parse_dates(date_strings)
 
     docket_obj['latestTimelineEvent'] = max(dates)
     docket_obj['firstTimelineEvent'] = min(dates)
@@ -122,9 +130,21 @@ def add_timeline_events(docket_obj):
     return docket_obj
 
 
+def parse_dates(date_strings):
+    """
+    Parse dates from API. Cannot simply use dateutil because cccasionally the month/day is set to '00'. Assumes that
+        substituting '01' is an acceptable alternative.
+    :param date_strings: List of date strings. Expected to be parseable except for occasionally containing dates of the
+        form 'dd/mm/yyyy' where 'mm' = '00'
+    :return: List of parsed date objects with
+    """
+    dates = [parse(re.sub(r'/00/', r'/01/', d), dayfirst=False) for d in date_strings]
+    return dates
+
+
 if __name__ == '__main__':
-    documents = get_category_documents(regulation_category, 'PR', 20)['documents']
-    documents.append(get_category_documents(regulation_category, 'FR', 20)['documents'])
+    documents = get_category_documents(regulation_category, 'PR', results_per_category//2)['documents']
+    documents.append(get_category_documents(regulation_category, 'FR', results_per_category//2)['documents'])
 
     for document in documents:
         if 'docketId' in document:
@@ -137,9 +157,9 @@ if __name__ == '__main__':
 
             # Insert into database
             if docket:
-                insert(docket, 'dockets')
+                insert(docket, 'dockets-dated')
 
             if comments:
-                insert(comments, 'comments')
+                insert(comments, 'comments-dated')
 
             logging.info('Completed docket upload for id: {}'.format(docket_id))
