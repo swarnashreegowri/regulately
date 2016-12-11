@@ -73,8 +73,7 @@ class TestDocketAPI(unittest.TestCase):
         query_id = 'NOT-VALID-ID-STRING'
         category = 'PRE'
         fetched_json_obj = seed_db.get_docket(query_id, category)
-        self.assertTrue('code' in fetched_json_obj)
-        self.assertEqual(fetched_json_obj['code'], 404)
+        self.assertEqual(fetched_json_obj, None)
 
     def test_get_docket_comments(self):
         """Valid category should provide list of documents and category should be added to JSON"""
