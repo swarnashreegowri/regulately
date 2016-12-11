@@ -38,6 +38,10 @@ def get_category_documents(category, document_type, rules_per_page):
     """
     Get all
 
+    Explanation of additional parameters used in API query:
+        - cp: comment period. Set to O (Open).
+        - cs: comment period closing soon. Set to 90 (days until closing).
+
     :param category: Category of docket.
     :param document_type: One of N: Notice, PR: Proposed Rule, FR: Rule, O: Other, SR: Supporting & Related Material,
         PS: Public Submission
@@ -62,6 +66,10 @@ def get_docket(docket_id):
 
 def get_docket_comments(docket_id):
     """
+
+    Explanation of additional parameters used in API query:
+        - dct: document type. Set to PS (public submission).
+        - rpp: results per page. Set to maximum allowed value.
 
     :param str docket_id: A valid ID of a docket in regulations.gov, e.g. 'EPA-HQ-OAR-2014-0198'
     :return:
