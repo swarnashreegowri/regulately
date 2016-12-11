@@ -32,7 +32,8 @@ def get_docket(docket_id):
 
 @app.route('/dockets/<docket_id>/comments')
 def get_comments(docket_id):
-    comments = lib.mongo.retrieve_comments_by_docket_id(docket_id)
+    count = min(int(request.args.get('count', '10')), 100)
+    comments = lib.mongo.retrieve_comments_by_docket_id(docket_id, count)
     return make_json_response(list(comments))
 
 def make_json_response(data):
