@@ -5,6 +5,11 @@ from unittest import mock
 def test_static_file(client):
     client.get('/static/style.css')
 
+def test_get_dockets(client):
+    with mock.patch('lib.mongo.retrieveDockets', return_value=[{'title': 'Foo'}]):
+        data = client.get_json('/dockets')
+        assert 'Foo' in data[0]['title']
+
 def test_get_docket(client):
     with mock.patch('lib.mongo.retrieveDocket', return_value={'title': 'Foo'}):
         data = client.get_json('/dockets/1')

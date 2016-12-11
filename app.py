@@ -21,6 +21,14 @@ class Encoder(json.JSONEncoder):
     def default(self, obj):
         return str(obj)
 
+@app.route('/dockets')
+def get_dockets():
+    count = min(int(request.args.get('count', '10')), 100)
+    category = request.args.get('category', '')
+    dockets = lib.mongo.retrieveDockets(categories=[category], count=count)
+    return Response(json.dumps(dockets, cls=Encoder),
+                    mimetype='application/json')
+
 @app.route('/dockets/<docket_id>')
 def get_docket(docket_id):
     docket = lib.mongo.retrieveDocket(docket_id)
