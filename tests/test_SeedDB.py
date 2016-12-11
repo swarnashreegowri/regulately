@@ -9,7 +9,7 @@ import json
 
 import SeedDB as SeedDB
 
-test_file = os.path.join('.', 'Tests', 'TestData', 'test.json')
+test_file = os.path.join('.', 'tests', 'test_data', 'test.json')
 json_obj = {"_id": "test"}
 
 class TestDatabase(unittest.TestCase):
