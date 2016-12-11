@@ -40,17 +40,6 @@ class TestDatabase(unittest.TestCase):
         self.assertEqual(self.SeedDB.insert({"_id": "test"}, 'test'), 'test')  # give back _id
         self.assertEqual(self.mongo['test'].find()[0], {"_id": 'test'})  # inserted the record
 
-    # def test_worker(self):
-    #     """Ensure that the worker function can insert JSON into the database"""
-    #     self.SeedDB.q.put(test_file)
-    #     t = Thread(target=self.SeedDB.worker)
-    #     t.start()
-    #     self.SeedDB.q.join()
-    #     self.SeedDB.q.put(None)
-    #     t.join()
-    #     self.assertEqual(self.mongo['test'].find()[0], {"_id": 'test'})  # inserted the record
-
-
 class TestDocketAPI(unittest.TestCase):
     """"Test the regulations.gov documents API queries"""
 
