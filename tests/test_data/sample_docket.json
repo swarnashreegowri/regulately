@@ -1,0 +1,156 @@
+{
+    "rin": "1625-AA25",
+    "shortTitle": {
+        "value": "USCG",
+        "label": "Action Office"
+    },
+    "legalDeadlines": {
+        "value": "None",
+        "label": "Legal Deadlines"
+    },
+    "type": {
+        "value": "Rulemaking",
+        "label": "Type"
+    },
+    "cfrCitation": "33 CFR 97,46 CFR 91",
+    "subType": {
+        "value": "Commercial Vessels",
+        "label": "Subtype"
+    },
+    "numberOfComments": 35,
+    "legalAuthorities": {
+        "value": "46 U.S.C. 3306",
+        "label": "Legal Authorities"
+    },
+    "internationalImpacts": {
+        "value": "Yes",
+        "label": "International Impacts"
+    },
+    "parentAgencyAcronym": "DHS",
+    "requiresRegulatoryFlexibilityAnalysis": {
+        "value": "No",
+        "label": "Requires Regulatory Flexibility Analysis"
+    },
+    "title": "Cargo Securing on Vessels Operating in U.S. Waters",
+    "majorRule": {
+        "value": "No",
+        "label": "Major Rule"
+    },
+    "agendaStageOfRulemaking": {
+        "value": "Long-term Action",
+        "label": "Agenda Stage of Rulemaking"
+    },
+    "includedInRegulatoryPlan": {
+        "value": "No",
+        "label": "Included in Regulatory Plan"
+    },
+    "contact": [
+        {
+            "agency": "USCG",
+            "agencyName": "COAST GUARD",
+            "title": "Project Manager",
+            "streetAddress": "Commandant (CG-OES-2), 2703 Martin Luther King Jr., Avenue, SE., STOP 7509",
+            "zip": "20593-7509",
+            "phone": "202 372-1413",
+            "firstName": "Ken",
+            "state": "DC",
+            "city": "Washington",
+            "lastName": "Smith",
+            "parentAgency": "DHS",
+            "parentAgencyName": "DEPARTMENT OF HOMELAND SECURITY",
+            "emailAddress": "ken.a.smith@uscg.mil"
+        }
+    ],
+    "docketAbstract": "<p>This rulemaking applies to vessels of 500 gross tons or more traveling on international voyages. It would require manuals to guide vessel crews in securing certain cargo to prevent its loss at sea and would prescribe when and how the loss or jettisoning of cargo must be reported. It would also authorize third party organizations to review and approve cargo securing manuals on behalf of the Coast Guard.<\/p>",
+    "agencyAcronym": "USCG",
+    "unfundedMandates": {
+        "value": "No",
+        "label": "Unfunded Mandates"
+    },
+    "publicationPeriod": {
+        "value": "Fall 2016",
+        "label": "Publication Period"
+    },
+    "agency": "Coast Guard",
+    "federalismImplications": {
+        "value": "No",
+        "label": "Federalism Implications"
+    },
+    "keywords": {
+        "value": "Old RIN 2115-AF97",
+        "label": "Keyword(s)"
+    },
+    "parentAgency": "Department of Homeland Security",
+    "smallEntitiesAffected": {
+        "value": "No",
+        "label": "Small Entities Affected"
+    },
+    "impactsAndEffects": "International",
+    "docketId": "USCG-2000-7080",
+    "timeTables": [
+        {
+            "actionQualifier": "NPRM",
+            "date": "12/01/2000",
+            "action": "NPRM",
+            "frCitation": "65 FR 75201"
+        },
+        {
+            "actionQualifier": "NPRM Comment Period End",
+            "date": "03/01/2001",
+            "action": "NPRM Comment Period End"
+        },
+        {
+            "actionQualifier": "Supplemental NPRM",
+            "date": "11/15/2013",
+            "action": "Supplemental NPRM",
+            "frCitation": "78 FR 68784"
+        },
+        {
+            "actionQualifier": "Supplemental NPRM Comment Period End",
+            "date": "02/13/2014",
+            "action": "NPRM Comment Period End"
+        },
+        {
+            "actionQualifier": "Interim Final Rule",
+            "date": "05/09/2016",
+            "action": "Interim Final Rule",
+            "frCitation": "81 FR 27992"
+        },
+        {
+            "actionQualifier": "Interim Final Rule Effective",
+            "date": "06/08/2016",
+            "action": "Interim Final Rule Effective"
+        },
+        {
+            "actionQualifier": "Interim Final Rule Comment Period End",
+            "date": "08/08/2016",
+            "action": "Interim Final Rule Comment Period End"
+        },
+        {
+            "actionQualifier": "Interim Final Rule; Correction",
+            "date": "08/29/2016",
+            "action": "Correction",
+            "frCitation": "81 FR 59136"
+        },
+        {
+            "actionQualifier": "Next Action Undetermined",
+            "action": "Other"
+        }
+    ],
+    "priority": "Substantive, Nonsignificant",
+    "energyEffects": {
+        "value": "No",
+        "label": "Energy Effects"
+    },
+    "governmentLevelsAffected": {
+        "value": "No",
+        "label": "Government Levels Affected"
+    },
+    "ruleMakingStage": "LongTermAction",
+    "sentiment": {
+        "positive": 45,
+        "neutral": 57,
+        "rating": "NEUTRAL",
+        "negative": 3
+    }
+}
