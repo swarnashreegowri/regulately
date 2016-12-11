@@ -8,9 +8,9 @@ import mongomock
 import json
 
 from dateutil.parser import parse
-from constants import REGULATION_CATEGORIES
 
 import seed_db as seed_db
+import constants as constants
 
 test_data_path = os.path.join('.', 'tests', 'test_data')
 test_docket = os.path.join(test_data_path, 'sample_docket.json')
@@ -43,26 +43,25 @@ class TestDocketAPI(unittest.TestCase):
         category = 'EELS'
         document_type = 'PR'
 
-        fetched_json_obj = seed_db.get_category_documents(category, document_type, 10)
+        fetched_json_obj = seed_db.get_category_documents(category, document_type, 10, True)
         self.assertTrue('docketId' in fetched_json_obj['documents'][0])
 
     def test_get_docket(self):
         """Valid docket id should return JSON record with docket-specific fields"""
         query_id = 'EPA-HQ-OAR-2014-0198'
+        document = {'docketId': query_id}
         category = 'PRE'
-        due_date = '2010-08-20T23:59:59-04:00'
-        fetched_json_obj = seed_db.get_docket(query_id, category, due_date)
+        fetched_json_obj = seed_db.get_docket(document, category)
         self.assertTrue('docketAbstract' in fetched_json_obj)
         self.assertEqual(fetched_json_obj['docketId'], query_id)
-        self.assertEqual(fetched_json_obj['category'], REGULATION_CATEGORIES[category])
-        self.assertEqual(fetched_json_obj['commentDueDate'], parse('2010-08-20T23:59:59-04:00'))
+        self.assertEqual(fetched_json_obj['category'], constants.REGULATION_CATEGORIES[category])
+        self.assertEqual(fetched_json_obj['openForComment'], None)
 
     def test_get_invalid_docket(self):
         """Invalid docket id should return None"""
-        query_id = 'NOT-VALID-ID-STRING'
+        document = 'NOT-VALID-DOCUMENT-STRING'
         category = 'PRE'
-        due_date = '2010-08-20T23:59:59-04:00'
-        fetched_json_obj = seed_db.get_docket(query_id, category, due_date)
+        fetched_json_obj = seed_db.get_docket(document, category)
         self.assertIsNone(fetched_json_obj)
 
     def test_get_docket_comments(self):
@@ -91,8 +90,8 @@ class TestAddDateInformation(unittest.TestCase):
         self.assertEqual(docket['firstTimelineEvent'], parse('12/01/2000', dayfirst=False))
         self.assertEqual(docket['latestTimelineEvent'], parse('08/29/2016', dayfirst=False))
 
-    def test_parse_dates(self):
+    def test_parse_api_date(self):
         date_strings = ["06/08/2016", "08/29/2006", "01/00/2017", "03/01/2001"]
         expected_dates = [parse(d, dayfirst=False) for d in ["06/08/2016", "08/29/2006", "01/01/2017", "03/01/2001"]]
 
-        self.assertSequenceEqual(seed_db.parse_dates(date_strings), expected_dates)
+        self.assertSequenceEqual([seed_db.parse_api_date(d) for d in date_strings], expected_dates)

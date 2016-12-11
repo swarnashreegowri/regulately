@@ -3,16 +3,18 @@
 from flask import Flask, Response, request, send_file, send_from_directory
 import lib.mongo
 import json
+import os
 
 app = Flask('regulately')
+root = os.path.dirname(__file__)
 
 @app.route('/static/<path:path>')
 def static_file(path):
-    return send_from_directory('static', path)
+    return send_from_directory(os.path.join(root, 'static'), path)
 
 @app.route('/')
 def main_page():
-    return send_file('index.html')
+    return send_file(os.path.join(root, 'index.html'))
 
 @app.route('/dockets')
 def get_dockets():

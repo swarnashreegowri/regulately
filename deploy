@@ -1,0 +1,65 @@
+#!/bin/bash -e
+
+# Run this script to combine the front end and back end into a deployable unit.
+
+if [ -d regulately-front-end ] && [ -d regulately-back-end ]; then
+    true
+else
+    echo 'Please run from a location where regulately-front-end and regulately-back-end are both subdirectories of the current directory.'
+    exit 1
+fi
+
+if [ -e regulately ]; then
+    echo -n 'Okay to delete existing "regulately" directory? '
+    read answer
+    if [ "$answer" = y ]; then
+        rm -rf regulately
+    else
+        exit 1
+    fi
+fi
+
+root=$(pwd)
+out=$(pwd)/regulately
+
+echo
+echo 'Building the front end.'
+cd "$root"
+cd regulately-front-end
+if [ -e client/dist/bundle*.js ]; then
+    echo -n 'Okay to delete existing bundle.js? '
+    read answer
+    if [ "$answer" = y ]; then
+        rm -f client/dist/bundle*
+        npm run dist
+    else
+        echo 'Reusing existing bundle.js.'
+    fi
+fi
+
+echo
+echo 'Building the back end.'
+mkdir "$out"
+cd "$root"
+cd regulately-back-end
+cp -pr *.html "$out"
+cp -pr *.py "$out"
+cp -pr *.txt "$out"
+cp -pr Procfile "$out"
+cp -pr lib "$out"
+cp -pr serve "$out"
+cp -pr static "$out"
+cd "$root"
+cd regulately-front-end
+cp client/dist/bundle*.js "$out"/static/bundle.js
+
+echo
+echo 'Making an archive.'
+cd "$root"
+name=regulately-$(date -u +'%Y-%m-%d-%H-%M-%S').zip
+zip -r $name regulately
+
+echo
+echo 'Done!'
+echo 'To run locally: regulately/serve'
+echo "To deploy, upload: $name"

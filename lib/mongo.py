@@ -1,6 +1,7 @@
 from pymongo import MongoClient
 from pymongo.operations import UpdateOne
-from external_services import DATABASE, MONGO_STRING
+
+from lib.external_services import DATABASE, MONGO_STRING
 
 client = MongoClient(MONGO_STRING + DATABASE)
 database = client[DATABASE]
