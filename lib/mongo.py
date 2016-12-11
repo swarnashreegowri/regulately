@@ -29,7 +29,6 @@ def retrieveDockets(count, categories, isOpen, daysLeftToComment):
         end_date = datetime.datetime.now() + datetime.timedelta(days=daysLeftToComment)
         dT = datetime.datetime(end_date.year, end_date.month, end_date.day)
         findFilter["commentDueDate"] = {'$gt': dO, '$lt': dT}
-    
     for retrievedDocket in dockets.find(findFilter).sort('sortDate', -1).limit(count):
         retrievedDockets.append(retrievedDocket)
     return retrievedDockets
