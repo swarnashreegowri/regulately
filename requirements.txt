@@ -1,10 +1,13 @@
-watson-developer-cloud==0.22.0
-textstat==0.3.1
+Flask>=0.10
 funcsigs==1.0.2
+gunicorn
 mock==2.0.0
 mongomock==3.7.0
 pbr==1.10.0
 pymongo==3.4.0
+pytest>=3
 requests==2.12.3
 sentinels==1.0.0
 six==1.10.0
+textstat==0.3.1
+watson-developer-cloud==0.22.0

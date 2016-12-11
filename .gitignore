@@ -90,4 +90,16 @@ ENV/
 # Rope project settings
 .ropeproject
 
-apikeys.json
+
+apikeys.py
+
+# MacOS junk
+.DS_Store
+
+# Editor temporary files
+*~
+*#
+.#*
+*.swp
+*.un~
+>>>>>>> 68b44835f5bbd1270c0e451b6098fc48ff8d5bca
