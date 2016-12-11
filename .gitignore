@@ -101,4 +101,4 @@ ENV/
 *.un~
 
 # Credentials that we don't want to check in
-ExternalServices.py
+external_services.py
