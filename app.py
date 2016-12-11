@@ -21,7 +21,8 @@ Welcome to Regulately!
 def get_dockets():
     count = min(int(request.args.get('count', '10')), 100)
     category = request.args.get('category', '')
-    dockets = lib.mongo.retrieveDockets(categories=[category], count=count)
+    categories = category.split(',') if category else []
+    dockets = lib.mongo.retrieveDockets(count=count, categories=categories)
     return make_json_response(dockets)
 
 @app.route('/dockets/<docket_id>')

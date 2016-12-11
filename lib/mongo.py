@@ -11,7 +11,7 @@ comments = database['comments']
 # def insertDockets (newDockets) :
 #     dockets.insert(newDockets)
 
-def retrieveDockets (count, categories = ""):
+def retrieveDockets(count, categories=[]):
     # takes an array of categories ex: ["nature"]
     retrievedDockets = []
     if categories :
@@ -41,5 +41,3 @@ def update_comments(field, value_map):
     comments.bulk_write(
         [UpdateOne({'documentId': comment_id}, {'$set': {field: value}})
          for comment_id, value in value_map.items()])
-
-print(retrieveDockets(1))
