@@ -12,7 +12,7 @@ dockets = database['dockets']
 comments = database['comments']
 categories = database['categories']
 
-# def insertDockets (newDockets) :
+# def insertDockets (newDockets):
 #     dockets.insert(newDockets)
 
 def retrieveDockets(count, categories, isOpen, daysLeftToComment):
@@ -20,15 +20,15 @@ def retrieveDockets(count, categories, isOpen, daysLeftToComment):
     retrievedDockets = []
     today = datetime.datetime.now()
     findFilter = {}
-    if categories :
-        findFilter['category'] = {'$in' : categories}
+    if categories:
+        findFilter['categoryId'] = {'$in': categories}
     if isOpen:
         findFilter['openForComment'] = True
     if daysLeftToComment:
         dO = datetime.datetime(today.year, today.month, today.day)
         end_date = datetime.datetime.now() + datetime.timedelta(days=daysLeftToComment)
         dT = datetime.datetime(end_date.year, end_date.month, end_date.day)
-        findFilter["commentDueDate"] = {'$gt' : dO, '$lt': dT}
+        findFilter["commentDueDate"] = {'$gt': dO, '$lt': dT}
 
     for retrievedDocket in dockets.find(findFilter).sort('sortDate', -1).limit(count):
         retrievedDockets.append(retrievedDocket)
@@ -59,3 +59,9 @@ def retrieve_categories():
 def rewrite_categories(category_items):
     categories.delete_many({})
     categories.insert_many(category_items)
+
+def upvote_comment(comment_id):
+    comments.update_one({'documentId': comment_id}, {'$inc': {'upvotes': 1}})
+
+def downvote_comment(comment_id):
+    comments.update_one({'documentId': comment_id}, {'$inc': {'downvotes': 1}})

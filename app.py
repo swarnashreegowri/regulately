@@ -42,6 +42,10 @@ def get_comments(docket_id):
     comments = lib.mongo.retrieve_comments_by_docket_id(docket_id, count)
     return make_json_response(list(comments))
 
+@app.route('/comments/<comment_id>/upvote', methods=['POST', 'OPTIONS'])
+
+@app.route('/comments/<comment_id>/downvote', methods=['POST', 'OPTIONS'])
+
 def make_json_response(data):
     class Encoder(json.JSONEncoder):
         def default(self, obj):
