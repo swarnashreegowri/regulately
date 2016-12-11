@@ -5,16 +5,15 @@ associated comments to MongoDB.
 MongoDB communication derived from work by Zachary Jacobi (https://github.com/zejacobi) in the DeltaGreen project
 (https://github.com/zejacobi/DeltaGreen)
 """
-
-import requests
 import logging
+import random
 import re
+import requests
 
 from dateutil.parser import parse
 
 from lib.mongo import database
 from lib.external_services import REG_API_KEY
-
 import constants
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -43,18 +42,28 @@ def get_category_documents(category, document_type, results_per_page, comments_o
     :param str category: Category of docket. One of the keys to REGULATION_CATEGORIES stored in constants.py
     :param str document_type: One of N: Notice, PR: Proposed Rule, FR: Rule, O: Other, SR: Supporting & Related Material
         PS: Public Submission
-    :param results_per_page: Number of records to return per query (since we're not doing a paged query). Max 1000.
+    :param int results_per_page: Number of records to return per query (since we're not doing a paged query).
+    :param bool comments_open: Return results that have comments open or not
     :return: A JSON object containing 'documents', a list of document records returned by the API and an added
         'category' field.
     """
+    # The results per page search parameter can only take the following values
+    rpp = min(r for r in [10, 25, 100, 500, 1000] if r > results_per_page)
+
     search_parameters = {'api_key': REG_API_KEY,
                          'cat': category,
                          'dct': document_type,
-                         'rpp': results_per_page,
-                         'cp': 'O',
-                         'cs': 90}
-    fetched_docket = requests.get('https://api.data.gov/regulations/v3/documents', params=search_parameters)
-    return fetched_docket.json()
+                         'rpp': rpp}
+    if comments_open:
+        search_parameters['cp'] = 'O'
+        search_parameters['cs'] = 90
+    else:
+        search_parameters['cp'] = 'C'
+
+    fetched_dockets = requests.get('https://api.data.gov/regulations/v3/documents', params=search_parameters)
+    dockets_obj = fetched_dockets.json()
+
+    return dockets_obj
 
 
 def get_docket(document, category,):
@@ -162,25 +171,32 @@ def parse_api_date(date_string):
 
 
 if __name__ == '__main__':
-    documents = []
-    for document_type in 'PR', 'FR':
-        documents.extend(get_category_documents(category=constants.QUERY_CATEGORY,
-                                                document_type=document_type,
-                                                results_per_page=constants.RESULTS_PER_QUERY//2,
-                                                comments_open=constants.QUERY_IS_OPEN)['documents'])
+    results_per_page = constants.RESULTS_PER_CATEGORY // 4,
 
-    for document in documents:
-        # Fetch from API- will be None if there was an error
-        docket = get_docket(document, constants.QUERY_CATEGORY)
+    for category in constants.REGULATION_CATEGORIES:
+        category_documents = []
 
-        if not docket:
-            continue
+        for document_type in 'PR', 'FR':
+            for is_comment_open in True, False:
+                category_documents.extend(get_category_documents(category=category,
+                                                                 document_type=document_type,
+                                                                 results_per_page=constants.RESULTS_PER_CATEGORY // 4,
+                                                                 comments_open=is_comment_open)['documents'])
 
-        # Insert docket and comments into database
-        insert(docket, 'dockets-dated')
-        comments = get_docket_comments(docket['docketId'])
+        # Restrict documents returned to desired number of results
+        category_results = random.sample(category_documents, constants.RESULTS_PER_CATEGORY)
+        for document in category_results:
+            # Fetch from API- will be None if there was an error
+            docket = get_docket(document, category)
 
-        if comments:
-            insert(comments, 'comments-dated')
+            if not docket:
+                continue
 
-        logging.info('Completed docket upload for id: {}'.format(docket['docketId']))
+            # Insert docket and comments into database
+            insert(docket, 'dockets')
+            comments = get_docket_comments(docket['docketId'])
+
+            if comments:
+                insert(comments, 'comments')
+
+            logging.info('Completed docket upload for id {} in category {}'.format(docket['docketId'], category))
