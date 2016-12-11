@@ -25,7 +25,7 @@ class Encoder(json.JSONEncoder):
 def get_dockets():
     count = min(int(request.args.get('count', '10')), 100)
     category = request.args.get('category', '')
-    dockets = lib.mongo.retrieveDockets(categories=[category], count=count)
+    dockets = lib.mongo.retrieveDockets(count=count, categories=[category])
     return Response(json.dumps(dockets, cls=Encoder),
                     mimetype='application/json')
 
