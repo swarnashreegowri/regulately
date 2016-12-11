@@ -16,26 +16,26 @@ def static_file(path):
 def main_page():
     return send_file(os.path.join(root, 'index.html'))
 
-@app.route('/categories')
+@app.route('/categories', methods=['GET', 'OPTIONS'])
 def get_categories():
     categories = lib.mongo.retrieve_categories()
     return make_json_response(categories)
 
-@app.route('/dockets')
+@app.route('/dockets', methods=['GET', 'OPTIONS'])
 def get_dockets():
     count = min(int(request.args.get('count', '10')), 100)
     category = request.args.get('category', '')
     categories = category.split(',') if category else []
-    openForComment = request.args.get('isOpen', False)
-    dockets = lib.mongo.retrieveDockets(count=count, categories=categories, openForComment=openForComment)
+    isOpen = request.args.get('isOpen', False)
+    dockets = lib.mongo.retrieveDockets(count=count, categories=categories, isOpen=isOpen)
     return make_json_response(dockets)
 
-@app.route('/dockets/<docket_id>')
+@app.route('/dockets/<docket_id>', methods=['GET', 'OPTIONS'])
 def get_docket(docket_id):
     docket = lib.mongo.retrieveDocket(docket_id)
     return make_json_response(docket)
 
-@app.route('/dockets/<docket_id>/comments')
+@app.route('/dockets/<docket_id>/comments', methods=['GET', 'OPTIONS'])
 def get_comments(docket_id):
     count = min(int(request.args.get('count', '10')), 100)
     comments = lib.mongo.retrieve_comments_by_docket_id(docket_id, count)
