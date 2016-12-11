@@ -7,7 +7,9 @@ import os
 import mongomock
 import json
 
-import SeedDB as SeedDB
+import seed_db as seed_db
+
+from constants import REGULATION_CATEGORIES
 
 test_file = os.path.join('.', 'tests', 'test_data', 'test.json')
 json_obj = {"_id": "test"}
@@ -25,7 +27,7 @@ class TestDatabase(unittest.TestCase):
         os.remove(test_file)
 
     def setUp(self):
-        self.SeedDB = SeedDB
+        self.SeedDB = seed_db
         self.mongo = mongomock.MongoClient()['Test']
         self.SeedDB.database = self.mongo
 
@@ -60,23 +62,25 @@ class TestDocketAPI(unittest.TestCase):
         """remove the JSON file"""
 
     def test_get_category_documents(self):
-        """"""
+        """Valid category should provide list of documents and category should be added to JSON"""
         category = 'EELS'
         document_type = 'PR'
 
-        fetched_json_obj = SeedDB.get_category_documents(category, document_type, 10)
+        fetched_json_obj = seed_db.get_category_documents(category, document_type, 10)
         self.assertTrue('docketId' in fetched_json_obj['documents'][0])
+        self.assertTrue('category' in fetched_json_obj['documents'][0])
+        self.assertEqual(fetched_json_obj['documents'][0]['category'], REGULATION_CATEGORIES[category])
 
     def test_get_docket(self):
         """Valid docket id should return JSON record with docket-specific fields"""
         query_id = 'EPA-HQ-OAR-2014-0198'
-        fetched_json_obj = SeedDB.get_docket(query_id)
+        fetched_json_obj = seed_db.get_docket(query_id)
         self.assertTrue('docketAbstract' in fetched_json_obj)
         self.assertEqual(fetched_json_obj['docketId'], query_id)
 
     def test_fetch_invalid_docket(self):
         """Invalid docket id should return JSON record with 404 Error"""
         query_id = 'NOT-VALID-ID-STRING'
-        fetched_json_obj = SeedDB.get_docket(query_id)
+        fetched_json_obj = seed_db.get_docket(query_id)
         self.assertTrue('code' in fetched_json_obj)
         self.assertEqual(fetched_json_obj['code'], 404)
