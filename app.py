@@ -8,9 +8,9 @@ import os
 app = Flask('regulately')
 root = os.path.dirname(__file__)
 
-@app.route('/static/<path:path>')
+@app.route('/static/<path>')
 def static_file(path):
-    return send_from_directory(os.path.join(root, 'static'), path)
+    return send_file(os.path.join(root, 'static', path))
 
 @app.route('/')
 def main_page():
