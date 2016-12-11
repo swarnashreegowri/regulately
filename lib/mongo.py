@@ -8,6 +8,7 @@ database = client[DATABASE]
 
 dockets = database['dockets']
 comments = database['comments']
+categories = database['categories']
 
 # def insertDockets (newDockets) :
 #     dockets.insert(newDockets)
@@ -42,3 +43,10 @@ def update_comments(field, value_map):
     comments.bulk_write(
         [UpdateOne({'documentId': comment_id}, {'$set': {field: value}})
          for comment_id, value in value_map.items()])
+
+def retrieve_categories():
+    return categories.find()
+
+def rewrite_categories(category_items):
+    categories.delete_many({})
+    categories.insert_many(category_items)
