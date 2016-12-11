@@ -67,11 +67,11 @@ dockets = database['dockets']
 def insertDockets (newDockets) :
 	dockets.insert(newDockets)
 
-def retreiveDockets ():
-	print (retreiveDockets)
+# def retreiveDockets ():
+# 	print (retreiveDockets)
 
 def retreiveDocket (docketID):
 	docket = dockets.find_one({'id': docketID})
 	return Docket
 	
-insertDockets(newDockets)
+# insertDockets(newDockets)
