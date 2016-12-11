@@ -11,8 +11,11 @@ API_KEY = IBMWatson
 alchemy_language = AlchemyLanguageV1(api_key=API_KEY)
 
 def getSentiment (text):
-	docSentiment = json.loads(json.dumps(alchemy_language.sentiment(text=text),indent=2))["docSentiment"]
-	return docSentiment.get("score", 0)
+	try: 
+		docSentiment = json.loads(json.dumps(alchemy_language.sentiment(text=text),indent=2))["docSentiment"]
+		return docSentiment.get("score", 0)
+	except:
+		return 0
 
 def getConcepts (text):
 	concepts = []
