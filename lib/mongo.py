@@ -12,16 +12,16 @@ comments = database['comments']
 # def insertDockets (newDockets) :
 #     dockets.insert(newDockets)
 
-def retrieveDockets(count, categories=[]):
+def retrieveDockets(count, categories=[], isOpen=False):
     # takes an array of categories ex: ["nature"]
     retrievedDockets = []
+    findFilter = {}
     if categories :
-        for retrievedDocket in dockets.find({'category': {'$in' : categories}}).limit(count):
-	        # .sort("date", -1)
-            retrievedDockets.append(retrievedDocket)
-    else :
-        for retrievedDocket in dockets.find().limit(count):
-            retrievedDockets.append(retrievedDocket)
+        findFilter['category'] = {'$in' : categories}
+    if isOpen:
+        findFilter['openForComment'] = True
+    for retrievedDocket in dockets.find(findFilter).sort('sortDate', -1).limit(count):
+        retrievedDockets.append(retrievedDocket)
     return retrievedDockets
 
 def retrieveDocket(docketID):
