@@ -23,7 +23,7 @@ def compute_rating(positive_count, neutral_count, negative_count):
         return 'NEGATIVE'
     return 'NEUTRAL'
 
-	
+
 def anaylze_engagement_rate():
     comments = lib.mongo.retrieve_comments()
     # comments keys by DocketId and then further keyed by date.
@@ -51,7 +51,7 @@ def analyze_comments():
     negative_counts = {}  # {docket_id: num_negative_comments}
 
     comment_sentiments = {}  # {comment_id: sentiment} to write to database
-	comment_complexity = {}  # {comment_id: complexity} to write to database
+    comment_complexity = {}  # {comment_id: complexity} to write to database
 
     for comment in lib.mongo.retrieve_comments(1000):
         docket_id = comment['docketId']
@@ -64,7 +64,7 @@ def analyze_comments():
         else:
             score = lib.analyze_text.getSentiment(text)
             comment_sentiments[comment_id] = score
-			
+
         logging.info('docket %s, comment %s: sentiment %s (%r)' %
                      (docket_id, comment_id, score, text[:20]))
         comment_sentiments[comment_id] = score
@@ -75,14 +75,14 @@ def analyze_comments():
             negative_counts if score < 0 else neutral_counts)
         counts[docket_id] = counts.get(docket_id, 0) + 1
 
-		# Add complexity analysis
-		comment_complexity[comment_id] = lib.analyze_text.get_complexity(text)
-		
+        # Add complexity analysis
+        comment_complexity[comment_id] = lib.analyze_text.get_complexity(text)
+
         if len(comment_sentiments) >= 10:
             logging.info('updating %d comments...' % len(comment_sentiments))
             lib.mongo.update_comments('sentiment', comment_sentiments)
-			lib.mongo.update_comments('complexity', comment_complexity)
-			logging.info('done!')
+            lib.mongo.update_comments('complexity', comment_complexity)
+            logging.info('done!')
 
     docket_sentiments = {}  # {docket_id: sentiment} to write to database
 
