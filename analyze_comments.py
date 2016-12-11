@@ -29,21 +29,30 @@ def analyze_comments():
     negative_counts = {}  # {docket_id: num_negative_comments}
 
     comment_sentiments = {}  # {comment_id: sentiment} to write to database
-    for comment in lib.mongo.retrieve_comments():
+    for comment in lib.mongo.retrieve_comments(1000):
         docket_id = comment['docketId']
         comment_id = comment['documentId']
 
         # Fill in the 'sentiment' field of this comment.
-        score = lib.analyze_text.getSentiment(comment.get('commentText', ''))
-        logging.info('docket %s, comment %s: sentiment %s' %
-                     (docket_id, comment_id, score))
-        comment_sentiments[comment_id] = score
+        text = comment.get('commentText', '').strip()
+        if 'sentiment' in comment:
+            score = comment['sentiment']
+        else:
+            score = lib.analyze_text.getSentiment(text)
+            comment_sentiments[comment_id] = score
+        logging.info('docket %s, comment %s: sentiment %s (%r)' %
+                     (docket_id, comment_id, score, text[:20]))
 
         # Aggregate the scores for each docket.
         scores.setdefault(docket_id, []).append(score)
         counts = positive_counts if score > 0 else (
             negative_counts if score < 0 else neutral_counts)
         counts[docket_id] = counts.get(docket_id, 0) + 1
+
+        if len(comment_sentiments) >= 10:
+            logging.info('updating %d comments...' % len(comment_sentiments))
+            lib.mongo.update_comments('sentiment', comment_sentiments)
+            comment_sentiments = {}
 
     logging.info('updating %d comments...' % len(comment_sentiments))
     lib.mongo.update_comments('sentiment', comment_sentiments)
