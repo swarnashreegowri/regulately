@@ -43,8 +43,14 @@ def get_comments(docket_id):
     return make_json_response(list(comments))
 
 @app.route('/comments/<comment_id>/upvote', methods=['POST', 'OPTIONS'])
+def upvote_comment(comment_id):
+    lib.mongo.upvote_comment(comment_id)
+    return make_json_response({'status': 'ok'})
 
 @app.route('/comments/<comment_id>/downvote', methods=['POST', 'OPTIONS'])
+def downvote_comment(comment_id):
+    lib.mongo.downvote_comment(comment_id)
+    return make_json_response({'status': 'ok'})
 
 def make_json_response(data):
     class Encoder(json.JSONEncoder):
