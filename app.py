@@ -22,7 +22,8 @@ def get_dockets():
     category = request.args.get('category', '')
     categories = category.split(',') if category else []
     openForComment = request.args.get('isOpen', False)
-    dockets = lib.mongo.retrieveDockets(count=count, categories=categories, openForComment=openForComment)
+    daysLeftToComment = request.args.get('daysLeftToComment', 0)
+    dockets = lib.mongo.retrieveDockets(count=count, categories=categories, openForComment=openForComment, daysLeftToComment=daysLeftToComment)
     return make_json_response(dockets)
 
 @app.route('/dockets/<docket_id>')

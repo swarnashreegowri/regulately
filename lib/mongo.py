@@ -1,7 +1,9 @@
+import datetime
+import dateutil.parser
 from pymongo import MongoClient
 from pymongo.operations import UpdateOne
 
-from lib.external_services import DATABASE, MONGO_STRING
+from external_services import DATABASE, MONGO_STRING
 
 client = MongoClient(MONGO_STRING + DATABASE)
 database = client[DATABASE]
@@ -12,14 +14,21 @@ comments = database['comments']
 # def insertDockets (newDockets) :
 #     dockets.insert(newDockets)
 
-def retrieveDockets(count, categories=[], isOpen=False):
+def retrieveDockets(count, categories, isOpen, daysLeftToComment):
     # takes an array of categories ex: ["nature"]
     retrievedDockets = []
+    today = datetime.datetime.now()
     findFilter = {}
     if categories :
         findFilter['category'] = {'$in' : categories}
     if isOpen:
         findFilter['openForComment'] = True
+    if daysLeftToComment:
+        dO = datetime.datetime(today.year, today.month, today.day)
+        end_date = datetime.datetime.now() + datetime.timedelta(days=daysLeftToComment)
+        dT = datetime.datetime(end_date.year, end_date.month, end_date.day)
+        findFilter["commentDueDate"] = {'$gt' : dO, '$lt': dT}
+
     for retrievedDocket in dockets.find(findFilter).sort('sortDate', -1).limit(count):
         retrievedDockets.append(retrievedDocket)
     return retrievedDockets
@@ -32,8 +41,8 @@ def update_dockets(field, value_map):
         [UpdateOne({'docketId': docket_id}, {'$set': {field: value}})
          for docket_id, value in value_map.items()])
 
-def retrieve_comments(count):
-    return comments.find().sort("postedDate", -1).limit(count)
+def retrieve_comments():
+    return comments.find().sort("postedDate", -1)
 
 def retrieve_comments_by_docket_id(docket_id, count):
     return comments.find({'docketId': docket_id}).sort("postedDate", -1).limit(count)
