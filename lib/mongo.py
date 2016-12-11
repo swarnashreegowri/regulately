@@ -17,8 +17,7 @@ def retreiveDockets (categories = ""):
 	else :
 		for retreivedDocket in dockets.find():
 			retrievedDockets.append(retreivedDocket)
-		print(retrievedDockets)
-
+			
 	return retrievedDockets
 
 def retreiveDocket (docketID):
