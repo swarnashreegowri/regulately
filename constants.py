@@ -10,6 +10,4 @@ REGULATION_CATEGORIES = {
     'PRE': 'Housing, Development, and Real Estate',
     'ITT': 'Technology and Telecommunications',
 }
-QUERY_CATEGORY = 'ITT'  # enter regulation category of interest here
-RESULTS_PER_QUERY = 10  # will fetch this #/2 'PR' and 'FR' records from the regulation category above
-QUERY_IS_OPEN = True  # whether to filter by comment period open or closed
+RESULTS_PER_CATEGORY = 4  # will fetch this number of results per query category (combination of FR/PR and open/closed)
