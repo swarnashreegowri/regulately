@@ -1,6 +1,6 @@
 """The main Flask application.  To run the app: ./serve"""
 
-from flask import Flask, Response, request, send_from_directory
+from flask import Flask, Response, request, send_file, send_from_directory
 import lib.mongo
 import json
 
@@ -12,10 +12,7 @@ def static_file(path):
 
 @app.route('/')
 def main_page():
-    return '''
-<link rel="stylesheet" href="static/style.css">
-Welcome to Regulately!
-'''
+    return send_file('index.html')
 
 @app.route('/dockets')
 def get_dockets():
@@ -40,7 +37,6 @@ def make_json_response(data):
         def default(self, obj):
             return str(obj)
 
-    response = Response(json.dumps(data, cls=Encoder),
-                        mimetype='application/json')
-    response.headers['Access-Control-Allow-Origin'] = '*'
-    return response
+    return Response(json.dumps(data, cls=Encoder),
+                    mimetype='application/json',
+                    headers={'Access-Control-Allow-Origin': '*'})
