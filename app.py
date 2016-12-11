@@ -28,7 +28,7 @@ def get_dockets():
     categories = category.split(',') if category else []
     isOpen = request.args.get('isOpen', False)
     daysLeftToComment = request.args.get('daysLeftToComment', 0)
-    dockets = lib.mongo.retrieveDockets(count=count, categories=categories, isOpen=openForComment, daysLeftToComment=daysLeftToComment)
+    dockets = lib.mongo.retrieveDockets(count=count, categories=categories, isOpen=isOpen, daysLeftToComment=daysLeftToComment)
     return make_json_response(dockets)
 
 @app.route('/dockets/<docket_id>', methods=['GET', 'OPTIONS'])
@@ -41,6 +41,16 @@ def get_comments(docket_id):
     count = min(int(request.args.get('count', '10')), 100)
     comments = lib.mongo.retrieve_comments_by_docket_id(docket_id, count)
     return make_json_response(list(comments))
+
+@app.route('/comments/<comment_id>/upvote', methods=['POST', 'OPTIONS'])
+def upvote_comment(comment_id):
+    lib.mongo.upvote_comment(comment_id)
+    return make_json_response({'status': 'ok'})
+
+@app.route('/comments/<comment_id>/downvote', methods=['POST', 'OPTIONS'])
+def downvote_comment(comment_id):
+    lib.mongo.downvote_comment(comment_id)
+    return make_json_response({'status': 'ok'})
 
 def make_json_response(data):
     class Encoder(json.JSONEncoder):

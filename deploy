@@ -22,11 +22,13 @@ if [ -f client/dist/bundle*.js ]; then
     read answer
     if [ "$answer" = y ]; then
         rm -f client/dist/bundle*
+        npm install
         npm run dist
     else
         echo 'Reusing existing bundle.js.'
     fi
 else
+    npm install
     npm run dist
 fi
 

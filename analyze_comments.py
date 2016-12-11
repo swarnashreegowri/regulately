@@ -66,12 +66,9 @@ def analyze_comments():
 
         logging.info('docket %s, comment %s: sentiment %s (%r)' %
                      (docket_id, comment_id, score, text[:20]))
-        comment_sentiments[comment_id] = score
 
         # Fill in the 'complexity' field of this comment.
-        if 'complexity' in comment:
-            score = comment['complexity']
-        else:
+        if 'complexity' not in comment:
             comment_complexity[comment_id] = lib.analyze_text.get_complexity(text)
 
         # Aggregate the sentiment scores for each docket.
