@@ -1,9 +1,6 @@
 import lib.mongo
 import logging
-
-def compute_sentiment_score(text):
-    text = text.lower()
-    return text.count('e') - text.count('o')
+import lib.analyze_text
 
 def compute_rating(positive_count, neutral_count, negative_count):
     total = positive_count + neutral_count + negative_count
@@ -32,17 +29,16 @@ def analyze_comments():
     negative_counts = {}  # {docket_id: num_negative_comments}
 
     comment_sentiments = {}  # {comment_id: sentiment} to write to database
-
     for comment in lib.mongo.retrieve_comments():
         docket_id = comment['docketId']
         comment_id = comment['documentId']
 
         # Fill in the 'sentiment' field of this comment.
-        score = compute_sentiment_score(comment.get('commentText', ''))
+        score = lib.analyze_text.getSentiment(comment.get('commentText', ''))
         logging.info('docket %s, comment %s: sentiment %s' %
                      (docket_id, comment_id, score))
         comment_sentiments[comment_id] = score
-
+        
         # Aggregate the scores for each docket.
         scores.setdefault(docket_id, []).append(score)
         counts = positive_counts if score > 0 else (
