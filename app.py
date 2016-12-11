@@ -1,42 +1,44 @@
 """The main Flask application.  To run the app: ./serve"""
 
-from flask import Flask, Response, request, send_from_directory
+from flask import Flask, Response, request, send_file, send_from_directory
 import lib.mongo
 import json
+import os
 
 app = Flask('regulately')
+root = os.path.dirname(__file__)
 
 @app.route('/static/<path:path>')
 def static_file(path):
-    return send_from_directory('static', path)
+    return send_from_directory(os.path.join(root, 'static'), path)
 
 @app.route('/')
 def main_page():
-    return '''
-<link rel="stylesheet" href="static/style.css">
-Welcome to Regulately!
-'''
-
-class Encoder(json.JSONEncoder):
-    def default(self, obj):
-        return str(obj)
+    return send_file(os.path.join(root, 'index.html'))
 
 @app.route('/dockets')
 def get_dockets():
     count = min(int(request.args.get('count', '10')), 100)
     category = request.args.get('category', '')
-    dockets = lib.mongo.retrieveDockets(categories=[category], count=count)
-    return Response(json.dumps(dockets, cls=Encoder),
-                    mimetype='application/json')
+    categories = category.split(',') if category else []
+    dockets = lib.mongo.retrieveDockets(count=count, categories=categories)
+    return make_json_response(dockets)
 
 @app.route('/dockets/<docket_id>')
 def get_docket(docket_id):
     docket = lib.mongo.retrieveDocket(docket_id)
-    return Response(json.dumps(docket, cls=Encoder),
-                    mimetype='application/json')
+    return make_json_response(docket)
 
 @app.route('/dockets/<docket_id>/comments')
 def get_comments(docket_id):
     comments = lib.mongo.retrieve_comments_by_docket_id(docket_id)
-    return Response(json.dumps(list(comments), cls=Encoder),
-                    mimetype='application/json')
+    return make_json_response(list(comments))
+
+def make_json_response(data):
+    class Encoder(json.JSONEncoder):
+        def default(self, obj):
+            return str(obj)
+
+    return Response(json.dumps(data, cls=Encoder),
+                    mimetype='application/json',
+                    headers={'Access-Control-Allow-Origin': '*'})
