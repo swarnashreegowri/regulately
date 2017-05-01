@@ -16,3 +16,7 @@ DATABASE = 'regulately'
 REG_API_KEY = '<your_regulations_gov_api_key>'
 IBMWatson = '<your_watson_api_key>'
  ```
+
+## Getting a Watson API key
+
+We are using `AlchemyLanguageV1` for sentiment analysis of comments on regulations. You can follow the [Alchemy Language prerequisites](https://www.ibm.com/watson/developercloud/doc/alchemylanguage/overview.html#preReqs) to get an API key and get your development environment set up.
